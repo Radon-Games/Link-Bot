@@ -13,9 +13,10 @@ module.exports = {
     if (!type) {
       const result = await getTypes(interaction.guild.id);
       if (result.status) {
+        result.data = result.data || [];
         const embed = new MessageEmbed()
           .setTitle("Link types")
-          .setDescription(result.data.join("\n"))
+          .setDescription(result.data.length > 0 ? result.data.join("\n") : "")
           .setTimestamp()
           .setFooter({ text: `Proxy Bot - ${interaction.guild.name}`, iconURL: client.user.displayAvatarURL() });
         await interaction.reply({ embeds: [embed], ephemeral: true });
@@ -25,9 +26,10 @@ module.exports = {
     } else {
       const result = await getLinks(interaction.guild.id, type);
       if (result.status) {
+        result.data = result.data || [];
         const embed = new MessageEmbed()
           .setTitle(`${type} Links`)
-          .setDescription(result.data.join("\n"))
+          .setDescription(result.data.length > 0 ? result.data.join("\n") : "")
           .setTimestamp()
           .setFooter({ text: `Proxy Bot - ${interaction.guild.name}`, iconURL: client.user.displayAvatarURL() });
         await interaction.reply({ embeds: [embed], ephemeral: true });
