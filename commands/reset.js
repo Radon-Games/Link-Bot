@@ -76,20 +76,6 @@ module.exports = {
           interaction.editReply({ components: [row] });
         }
       });
-
-      collector.on("end", async (collected) => {
-        const reply = await interaction.fetchReply();
-        let messageId = reply.id;
-        interaction.channel.messages.fetch(messageId)
-          .then((message) => {
-            console.log(message);
-            button.setDisabled(true);
-            interaction.editReply({ components: [row] });
-          })
-          .catch((err) => {
-            return;
-          });	      
-      });
     }
   }
 };
