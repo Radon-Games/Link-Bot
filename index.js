@@ -2,10 +2,9 @@
 const { Client, Intents, MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
-const { addServer, removeServer } = require("./db.js");
 const fs = require("node:fs");
 require("dotenv").config();
-const { getLinks, reset } = require("./db.js");
+const { addServer, removeServer, getLinks, getLimit, getUser, setUser } = require("./db.js");
 
 
 // variables
@@ -43,26 +42,52 @@ client.on("interactionCreate", async (interaction) => {
 
     if (type.startsWith("__")) return;
 
-    const result = await getLinks(interaction.guild.id, type);
-    if (result.status) {
-      const embed = new MessageEmbed()
-        .setTitle(`Proxy Bot - ${interaction.guild.name}`)
-        .setDescription("Save the url before this message disappears.")
-        .addField("URL", result.data[0])
-        .addField("Type", type)
-        .addField("Remaining", "2")
-        .setTimestamp()
-	      .setFooter({ text: `Proxy Bot - ${interaction.guild.name}`, iconURL: client.user.displayAvatarURL() });
+    let limit = await getLimit(interaction.guild.id);
+    if (!limit.status) return await interaction.reply({ content: limit.message, ephemeral: true });
+    limit = limit.data;
 
-      const row = new MessageActionRow().addComponents(new MessageButton()
-        .setURL(result.data[0])
-        .setLabel("Open")
-        .setStyle("LINK"));
-      
+    let user = await getUser(interaction.guild.id, interaction.member.user.id);
+    if (!user.status) return await interaction.reply({ content: user.message, ephemeral: true });
+    user = user.data;
+    
+    if (user.count >= limit) return await interaction.reply({ content: `You have reached your limit of ${limit} links.`, ephemeral: true });
+
+    let links = await getLinks(interaction.guild.id, type);
+    if (!links.status) return await interaction.reply({ content: links.message, ephemeral: true });
+    links = links.data;
+
+    let link;
+    links.forEach((_link) => {
+      if (user.links.includes(_link)) return;
+      if (link) return;
+      user.links.push(_link);
+      link = _link;
+      user.count++;
+    });
+
+    if (!link) return await interaction.reply({ content: "No links available.", ephemeral: true });
+
+    const embed = new MessageEmbed()
+      .setTitle(`Proxy Bot - ${interaction.guild.name}`)
+      .setDescription("Save the url before this message disappears.")
+      .addField("URL", link)
+      .addField("Type", type)
+      .addField("Remaining", `${limit - user.count}`)
+      .setTimestamp()
+      .setFooter({ text: `Proxy Bot - ${interaction.guild.name}`, iconURL: client.user.displayAvatarURL() });
+
+    const row = new MessageActionRow().addComponents(new MessageButton()
+      .setURL(link)
+      .setLabel("Open")
+      .setStyle("LINK"));
+  
+    try {
       await interaction.reply({ embeds: [embed], components: [row], ephemeral: true });
-    } else {
-      await interaction.reply({ content: result.message, ephemeral: true });
+    } catch {
+      await interaction.reply({ embeds: [embed], ephemeral: true });
     }
+
+    await setUser(interaction.guild.id, interaction.member.user.id, user);
   }
 });
 

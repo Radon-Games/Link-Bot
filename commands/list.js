@@ -13,22 +13,24 @@ module.exports = {
     if (!type) {
       const result = await getTypes(interaction.guild.id);
       if (result.status) {
-        let message = "Link types:";
-        result.data.forEach((type) => {
-          message += `\n${type}`;
-        });
-        await interaction.reply({ content: message, ephemeral: true });
+        const embed = new MessageEmbed()
+          .setTitle("Link types")
+          .setDescription(result.data.join("\n"))
+          .setTimestamp()
+          .setFooter({ text: `Proxy Bot - ${interaction.guild.name}`, iconURL: client.user.displayAvatarURL() });
+        await interaction.reply({ embeds: [embed], ephemeral: true });
       } else {
         await interaction.reply({ content: result.message, ephemeral: true });
       }
     } else {
       const result = await getLinks(interaction.guild.id, type);
       if (result.status) {
-        let message = `Links of type ${type}:`;
-        result.data.forEach((link) => {
-          message += `\n<${link}>`;
-        });
-        await interaction.reply({ content: message, ephemeral: true });
+        const embed = new MessageEmbed()
+          .setTitle(`${type} Links`)
+          .setDescription(result.data.join("\n"))
+          .setTimestamp()
+          .setFooter({ text: `Proxy Bot - ${interaction.guild.name}`, iconURL: client.user.displayAvatarURL() });
+        await interaction.reply({ embeds: [embed], ephemeral: true });
       } else {
         await interaction.reply({ content: result.message, ephemeral: true });
       }

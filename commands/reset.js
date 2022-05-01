@@ -11,9 +11,11 @@ module.exports = {
     const target = interaction.options.getUser("target");
     
     if (target) {
+
+
       const embed = new MessageEmbed()
         .setTitle(`Reset proxy limits for ${target.username}#${target.discriminator}.`)
-        .setDescription(`This will reset the proxy timeout for <@${target.id}>. You have 5 secconds to click \`Confirm\` to continue.`)
+        .setDescription(`This will reset proxy limits for <@${target.id}>. You have 5 secconds to click \`Confirm\` to continue.`)
         .setColor(0xFF0000)
         .setTimestamp()
 	      .setFooter({ text: `Proxy Bot - ${interaction.guild.name}`, iconURL: client.user.displayAvatarURL() });
@@ -42,12 +44,14 @@ module.exports = {
 	      button.setDisabled(true);
         interaction.editReply({ components: [row] });
       });
-      // reset(interaction.guild.id, target.id);
-      // await interaction.reply({ content: `Reset proxy limits for <@${target.id}>` });
+
+
     } else {
+
+
       const embed = new MessageEmbed()
         .setTitle("Reset proxy limits for the entire server.")
-        .setDescription("This will reset the proxy timeout for all users on the server. You have 5 secconds to click `Confirm` to continue.")
+        .setDescription("This will reset proxy limits for all users on the server. You have 5 secconds to click `Confirm` to continue.")
         .setColor(0xFF0000)
         .setTimestamp()
 	      .setFooter({ text: `Proxy Bot - ${interaction.guild.name}`, iconURL: client.user.displayAvatarURL() });
@@ -76,6 +80,8 @@ module.exports = {
 	      button.setDisabled(true);
         interaction.editReply({ components: [row] });
       });
+
+      
     }
   }
 };

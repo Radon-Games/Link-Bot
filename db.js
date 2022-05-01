@@ -18,27 +18,30 @@ async function removeServer (id) {
 }
 
 async function getUser (id, userId) {
-  if (!db.get(`servers.${id}`)) return;
+  if (!db.get(`servers.${id}`)) return error("Server not found, please contact support.");
   let user = await db.get(`servers.${id}.users.${userId}`) || {
     count: 0,
     links: []
   };
-  return user;
+  return success(user);
 }
 
 async function setUser (id, userId, user) {
-  if (!db.get(`servers.${id}`)) return;
+  if (!db.get(`servers.${id}`)) return error("Server not found, please contact support.");
   await db.set(`servers.${id}.users.${userId}`, user);
+  return success();
 }
 
 async function getLimit (id) {
-  if (!db.get(`servers.${id}`)) return 3;
-  return await db.get(`servers.${id}.limit`);
+  if (!db.get(`servers.${id}`)) return error("Server not found, please contact support.");
+  let limit = await db.get(`servers.${id}.limit`) || 3;
+  return success(limit);
 }
 
 async function setLimit (id, limit) {
-  if (!db.get(`servers.${id}`)) return;
+  if (!db.get(`servers.${id}`)) return error("Server not found, please contact support.");
   await db.set(`servers.${id}.limit`, limit);
+  return success();
 }
 
 async function reset (id, userId) {
@@ -51,11 +54,10 @@ async function reset (id, userId) {
     user.count = 0;
     await db.set(`servers.${id}.users.${userId}`, user);
   } else {
-    let users = await db.get(`servers.${id}.users`) || [];
-    users.forEach((user) => {
-      user.count = 0;
+    let users = await db.get(`servers.${id}.users`) || {};
+    Object.keys(users).forEach(async (key) => {
+      await db.set(`servers.${id}.users.${key}.count`, 0);
     });
-    await db.set(`servers.${id}.users`, users);
   }
 }
 
