@@ -29,10 +29,10 @@ module.exports = {
 
       await interaction.reply({ embeds: [embed], components: [row] })
 
-      const collector = interaction.channel.createMessageComponentCollector({ componentType: 'BUTTON', time: 5000 });
+      const collector = interaction.channel.createMessageComponentCollector({ componentType: "BUTTON", time: 5000 });
 
-      collector.on('collect', (i) => {
-        if (i.component.customId === '__RESET_CONFIRM_USER__') {
+      collector.on("collect", (i) => {
+        if (i.component.customId === "__RESET_CONFIRM_USER__") {
           reset(interaction.guild.id, target.id);
           i.reply({ content: `Proxy limits for <@${target.id}> have been reset.` });
           button.setDisabled(true);
@@ -40,7 +40,7 @@ module.exports = {
         }
       });
 
-      collector.on('end', (collected) => {
+      collector.on("end", (collected) => {
 	      button.setDisabled(true);
         interaction.editReply({ components: [row] });
       });
@@ -65,10 +65,10 @@ module.exports = {
 
       await interaction.reply({ embeds: [embed], components: [row] })
 
-      const collector = interaction.channel.createMessageComponentCollector({ componentType: 'BUTTON', time: 5000 });
+      const collector = interaction.channel.createMessageComponentCollector({ componentType: "BUTTON", time: 5000 });
 
-      collector.on('collect', (i) => {
-        if (i.component.customId === '__RESET_CONFIRM_GUILD__') {
+      collector.on("collect", (i) => {
+        if (i.component.customId === "__RESET_CONFIRM_GUILD__") {
           reset(interaction.guild.id);
           i.reply({ content: `Proxy limits for the entire server have been reset.` });
           button.setDisabled(true);
@@ -76,7 +76,7 @@ module.exports = {
         }
       });
 
-      collector.on('end', (collected) => {
+      collector.on("end", (collected) => {
 	      button.setDisabled(true);
         interaction.editReply({ components: [row] });
       });

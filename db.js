@@ -1,5 +1,5 @@
-const { use } = require('express/lib/router');
-const { QuickDB } = require('quick.db');
+const { use } = require("express/lib/router");
+const { QuickDB } = require("quick.db");
 const db = new QuickDB({ filePath: "db.sqlite" });
 
 

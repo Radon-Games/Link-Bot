@@ -8,7 +8,8 @@ const { addServer, removeServer, getLinks, getLimit, getUser, setUser } = requir
 
 
 // variables
-const intents = Object.values(Intents.FLAGS);
+//const intents = Object.values(Intents.FLAGS);
+const intents = [Intents.FLAGS.GUILDS];
 const client = new Client({ intents });
 const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
 
