@@ -69,6 +69,7 @@ module.exports = {
 
       collector.on("collect", (i) => {
         if (i.component.customId === "__RESET_CONFIRM_GUILD__") {
+          if (i.member.user.id !== interaction.member.user.id) return i.reply({ content: `This button isnt for you.`, ephemeral: true });
           reset(interaction.guild.id);
           i.reply({ content: `Proxy limits for the entire server have been reset.` });
           button.setDisabled(true);
@@ -76,12 +77,19 @@ module.exports = {
         }
       });
 
-      collector.on("end", (collected) => {
-	      button.setDisabled(true);
-        interaction.editReply({ components: [row] });
+      collector.on("end", async (collected) => {
+        const reply = await interaction.fetchReply();
+        let messageId = reply.id;
+        interaction.channel.messages.fetch(messageId)
+          .then((message) => {
+            console.log(message);
+            button.setDisabled(true);
+            interaction.editReply({ components: [row] });
+          })
+          .catch((err) => {
+            return;
+          });	      
       });
-
-      
     }
   }
 };

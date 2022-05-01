@@ -9,7 +9,7 @@ const { addServer, removeServer, getLinks, getLimit, getUser, setUser } = requir
 
 // variables
 //const intents = Object.values(Intents.FLAGS);
-const intents = [Intents.FLAGS.GUILDS];
+const intents = [Intents.FLAGS.GUILDS,Intents.FLAGS.GUILD_MESSAGES];
 const client = new Client({ intents });
 const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
 
@@ -43,20 +43,22 @@ client.on("interactionCreate", async (interaction) => {
 
     if (type.startsWith("__")) return;
 
+    // get information from database
     let limit = await getLimit(interaction.guild.id);
     if (!limit.status) return await interaction.reply({ content: limit.message, ephemeral: true });
     limit = limit.data;
-
     let user = await getUser(interaction.guild.id, interaction.member.user.id);
     if (!user.status) return await interaction.reply({ content: user.message, ephemeral: true });
     user = user.data;
-    
     if (user.count >= limit) return await interaction.reply({ content: `You have reached your limit of ${limit} links.`, ephemeral: true });
-
     let links = await getLinks(interaction.guild.id, type);
     if (!links.status) return await interaction.reply({ content: links.message, ephemeral: true });
     links = links.data;
 
+    // randomly shuffle links
+    links = links.sort(() => Math.random() - 0.5);
+
+    // get random link
     let link;
     links.forEach((_link) => {
       if (user.links.includes(_link)) return;
@@ -68,6 +70,7 @@ client.on("interactionCreate", async (interaction) => {
 
     if (!link) return await interaction.reply({ content: "No links available.", ephemeral: true });
 
+    // send message
     const embed = new MessageEmbed()
       .setTitle(`Proxy Bot - ${interaction.guild.name}`)
       .setDescription("Save the url before this message disappears.")
@@ -88,11 +91,14 @@ client.on("interactionCreate", async (interaction) => {
       await interaction.reply({ embeds: [embed], ephemeral: true });
     }
 
+    // update database
     await setUser(interaction.guild.id, interaction.member.user.id, user);
   }
 });
 
-client.once("ready", () => {
+
+// update slash commands
+client.on("ready", () => {
   const guilds = client.guilds.cache.map(guild => guild.id);
   console.log("Updating slash commands");
   guilds.forEach((guildId) => {
