@@ -93,9 +93,11 @@ client.on("interactionCreate", async (interaction) => {
 
 client.once("ready", () => {
   const guilds = client.guilds.cache.map(guild => guild.id);
+  console.log("Updating slash commands");
   guilds.forEach((guildId) => {
     updateSlashCommands(guildId);
   });
+  console.log("Updated slash commands");
 	console.log(`Logged in as ${client.user.tag}!`);
 });
 
@@ -110,12 +112,10 @@ function updateSlashCommands (guildId) {
   const rest = new REST({ version: "9" }).setToken(process.env.TOKEN);
   (async () => {
 	  try {
-      console.log(`Updating slash commands for ${guildId}...`);
 	  	await rest.put(
 	  		Routes.applicationGuildCommands(client.user.id, guildId),
 	  		{ body: commands },
 	  	);
-      console.log(`Updated slash commands for ${guildId}`);
 	  } catch (error) {
 	  	console.error(error);
 	  }
