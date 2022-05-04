@@ -70,10 +70,11 @@ client.on("interactionCreate", async (interaction) => {
 
     if (!link) return await interaction.reply({ content: "No links available.", ephemeral: true });
 
+    const member = client.users.cache.get(interaction.member.user.id);
+
     // send message
     const embed = new MessageEmbed()
       .setTitle(`Proxy Bot - ${interaction.guild.name}`)
-      .setDescription("Save the url before this message disappears.")
       .addField("URL", link)
       .addField("Type", type)
       .addField("Remaining", `${limit - user.count}`)
@@ -84,11 +85,17 @@ client.on("interactionCreate", async (interaction) => {
       .setURL(link)
       .setLabel("Open")
       .setStyle("LINK"));
-  
+
     try {
-      await interaction.reply({ embeds: [embed], components: [row], ephemeral: true });
+      await member.send({ embeds: [embed], components: [row] });
+      await interaction.reply({ content: "Check your DMs.", ephemeral: true });
     } catch {
-      await interaction.reply({ embeds: [embed], ephemeral: true });
+      try {
+        await member.send({ embeds: [embed] });
+        await interaction.reply({ content: "Check your DMs.", ephemeral: true });
+      } catch {
+        await interaction.reply({ content: "Failed to send message. Are your DMs off?", ephemeral: true });
+      }
     }
 
     // update database
