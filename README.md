@@ -4,6 +4,7 @@ A customizable discord bot for distributing links.
 
 # Features
  - Adding and removing links
+ - No Duplicate Links
  - Link categories
  - View links by category
  - Customizable embeds
