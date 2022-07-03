@@ -1,7 +1,7 @@
 {
-  "name": "dispenser",
-  "version": "1.0.0",
-  "description": "This template provides an easy way to use NodeJS v16 on Replit! As of writing, NodeJS repls have Node v12, which is several years out of date.",
+  "name": "link-bot",
+  "version": "1.0.1",
+  "description": "A customizable discord bot for distributing links.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"

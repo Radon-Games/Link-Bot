@@ -5,7 +5,7 @@ const { setLimit } = require("../db.js");
 module.exports = {
   data: new SlashCommandBuilder()
 	  .setName("limit")
-	  .setDescription("Changes the limit of lins")
+	  .setDescription("Changes the limit of links")
     .addNumberOption(option => option.setName("limit")
       .setDescription("The new limit")
       .setRequired(true)),

@@ -20,7 +20,7 @@ async function getUser (id, userId) {
   if (!db.get(`servers.${id}`)) return error("Server not found, please contact support.");
   let user = await db.get(`servers.${id}.users.${userId}`) || {
     count: 0,
-    links: []
+    links: {}
   };
   return success(user);
 }
@@ -48,14 +48,22 @@ async function reset (id, userId) {
   if (userId) {
     let user = await db.get(`servers.${id}.users.${userId}`) || {
       count: 0,
-      links: []
+      links: {}
     };
+    console.log(user);
     user.count = 0;
     await db.set(`servers.${id}.users.${userId}`, user);
   } else {
     let users = await db.get(`servers.${id}.users`) || {};
+    console.log(users);
     Object.keys(users).forEach(async (key) => {
-      await db.set(`servers.${id}.users.${key}.count`, 0);
+      let user = await db.get(`servers.${id}.users.${key}`) || {
+        count: 0,
+        links: {}
+      };
+      console.log(user);
+      user.count = 0;
+      await db.set(`servers.${id}.users.${key}`, user);
     });
   }
 }

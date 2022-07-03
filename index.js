@@ -61,9 +61,10 @@ client.on("interactionCreate", async (interaction) => {
     // get random link
     let link;
     links.forEach((_link) => {
-      if (user.links.includes(_link)) return;
+      user.links[type] = user.links[type] || [];
+      if (user.links[type].includes(_link)) return;
       if (link) return;
-      user.links.push(_link);
+      user.links[type].push(_link);
       link = _link;
       user.count++;
     });
@@ -81,23 +82,13 @@ client.on("interactionCreate", async (interaction) => {
       .setTimestamp()
       .setFooter({ text: `Proxy Bot - ${interaction.guild.name}`, iconURL: client.user.displayAvatarURL() });
 
-    const row = new MessageActionRow().addComponents(new MessageButton()
-      .setURL(link)
-      .setLabel("Open")
-      .setStyle("LINK"));
-
     try {
-      await member.send({ embeds: [embed], components: [row] });
+      await member.send({ embeds: [embed] });
       await interaction.reply({ content: "Check your DMs.", ephemeral: true });
     } catch {
-      try {
-        await member.send({ embeds: [embed] });
-        await interaction.reply({ content: "Check your DMs.", ephemeral: true });
-      } catch {
-        await interaction.reply({ content: "Failed to send message. Are your DMs off?", ephemeral: true });
-      }
+      await interaction.reply({ content: "Failed to send message. Are your DMs off?", ephemeral: true });
     }
-
+  
     // update database
     await setUser(interaction.guild.id, interaction.member.user.id, user);
   }
