@@ -11,7 +11,6 @@ A customizable discord bot for distributing links.
  - Reset limits by user or for the entire server
 
 # Commands
----------------------------------------------------------------------------------------
 | Command    |  Description                |                 Example                  |
 | ---------- | --------------------------- | ---------------------------------------- |
 | /add       | Add a link                  | /add `Example` `https://example.com/`    |
@@ -20,7 +19,6 @@ A customizable discord bot for distributing links.
 | /list      | Lists all links of the type | /list `Example`                          |
 | /reset     | Resets the limits           | /reset `@Cohen#9959`                     |
 | /limit     | Chaanges the limit          | /limit `5`                               |
----------------------------------------------------------------------------------------
 
 # Getting Started
 
